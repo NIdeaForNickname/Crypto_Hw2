@@ -1,0 +1,42 @@
+{
+  "contracts/1_Storage.sol": {
+    "__sources__": {
+      "contracts/1_Storage.sol": {
+        "content": "// SPDX-License-Identifier: GPL-3.0\n\npragma solidity >=0.8.2 <0.9.0;\n\n/**\n * @title Storage\n * @dev Store & retrieve value in a variable\n * @custom:dev-run-script ./scripts/deploy_with_ethers.ts\n */\ncontract Storage {\n\n    uint256 number;\n\n    /**\n     * @dev Store value in variable\n     * @param num value to store\n     */\n    function store(uint256 num) public {\n        number = num;\n    }\n\n    /**\n     * @dev Return value \n     * @return value of 'number'\n     */\n    function retrieve() public view returns (uint256){\n        return number;\n    }\n}",
+        "file": "contracts/1_Storage.sol"
+      }
+    }
+  },
+  "contracts/Task1.sol": {
+    "__sources__": {
+      "contracts/Task1.sol": {
+        "content": "pragma solidity ^0.8.0;\n\nlibrary ArrayLibrary {\n\n    function find(uint256[] storage arr, uint256 val) internal view returns (int256) {\n        for (uint256 i = 0; i < arr.length; i++) {\n            if (arr[i] == val) return int256(i);\n        }\n        return -1;\n    }\n\n    function remove(uint256[] storage arr, uint256 index) internal {\n        require(index < arr.length, \"out of bounds\");\n        for (uint256 i = index; i < arr.length - 1; i++) {\n            arr[i] = arr[i + 1];\n        }\n        arr.pop();\n    }\n\n    function sort(uint256[] storage arr) internal {\n        uint256 l = arr.length;\n        for (uint256 i = 0; i < l; i++) {\n            for (uint256 j = i + 1; j < l; j++) {\n                if (arr[i] > arr[j]) {\n                    uint256 temp = arr[i];\n                    arr[i] = arr[j];\n                    arr[j] = temp;\n                }\n            }\n        }\n    }\n}\n\ncontract ArrayUtils {\n    using ArrayLibrary for uint256[];\n    uint256[] public data;\n\n    function addElement(uint256 _val) public { data.push(_val); }\n\n    function processArray(uint256 _valToRemove) public {\n        data.sort(); \n        int256 index = data.find(_valToRemove);\n        if (index >= 0) {\n            data.remove(uint256(index));\n        }\n    }\n\n    function getData() public view returns (uint256[] memory) { return data; }\n}",
+        "file": "contracts/Task1.sol"
+      }
+    }
+  },
+  "contracts/Task2.sol": {
+    "__sources__": {
+      "contracts/Task2.sol": {
+        "content": "pragma solidity ^0.8.0;\n\ncontract Grandma {\n    struct child {\n        uint256 birthTimestamp;\n        bool withdrawn;\n    }\n\n    mapping(address => child) public grandchildren;\n    uint256 public giftAmount;\n    address public grandma;\n\n    constructor(address[] memory _addresses, uint256[] memory _birthdays) payable {\n        require(_addresses.length == _birthdays.length, \"Mismatch data\");\n        grandma = msg.sender;\n        giftAmount = msg.value / _addresses.length;\n\n        for (uint i = 0; i < _addresses.length; i++) {\n            grandchildren[_addresses[i]] = child(_birthdays[i], false);\n        }\n    }\n\n    function claimGift() public {\n        child storage kid = grandchildren[msg.sender];\n        require(kid.birthTimestamp > 0, \"not a grandchild\");\n        require(block.timestamp >= kid.birthTimestamp, \"early\");\n        require(!kid.withdrawn, \"already taken\");\n\n        kid.withdrawn = true;\n        payable(msg.sender).transfer(giftAmount);\n    }\n}",
+        "file": "contracts/Task2.sol"
+      }
+    }
+  },
+  "contracts/Task3.sol": {
+    "__sources__": {
+      "contracts/Task3.sol": {
+        "content": "\npragma solidity ^0.8.0;\n\ncontract EducationGrant {\n    address public owner;\n\n    struct Student {\n        uint256 balance;\n        bool isGraduated;\n    }\n\n    mapping(address => Student) public students;\n\n    event Deposit(address indexed student, uint256 amount);\n    event GrantPaid(address indexed student, uint256 amount);\n    event StudentCertified(address indexed student);\n\n    modifier onlyOwner() {\n        require(msg.sender == owner, \"Only owner can certify\");\n        _;\n    }\n\n    constructor() { owner = msg.sender; }\n\n    function deposit(address _student) public payable {\n        students[_student].balance += msg.value;\n        emit Deposit(_student, msg.value);\n    }\n\n    function certifyCompletion(address _student) public onlyOwner {\n        students[_student].isGraduated = true;\n        emit StudentCertified(_student);\n    }\n\n    function withdrawGrant() public {\n        Student storage s = students[msg.sender];\n        require(s.isGraduated, \"Education not completed or certified\");\n        require(s.balance > 0, \"No funds available\");\n\n        uint256 amount = s.balance;\n        s.balance = 0;\n        payable(msg.sender).transfer(amount);\n        emit GrantPaid(msg.sender, amount);\n    }\n}",
+        "file": "contracts/Task3.sol"
+      }
+    }
+  },
+  "contracts/Task4.sol": {
+    "__sources__": {
+      "contracts/Task4.sol": {
+        "content": "pragma solidity ^0.8.0;\n\ncontract EmergencyFund {\n    mapping(address => uint256) public contributions;\n    address[] public members;\n    \n    struct Request {\n        address payable recipient;\n        uint256 amount;\n        uint256 approvals;\n        bool executed;\n    }\n\n    Request[] public requests;\n    mapping(uint256 => mapping(address => bool)) public votes;\n\n    constructor(address[] memory _members) {\n        members = _members;\n    }\n\n    function contribute() public payable {\n        contributions[msg.sender] += msg.value;\n    }\n\n    function createEmergencyRequest(uint256 _amount) public {\n        requests.push(Request(payable(msg.sender), _amount, 0, false));\n    }\n\n    function approveRequest(uint256 _reqId) public {\n        bool isMember = false;\n        for(uint i=0; i<members.length; i++) if(members[i] == msg.sender) isMember = true;\n        \n        require(isMember, \"not a member\");\n        require(!votes[_reqId][msg.sender], \"already voted\");\n\n        votes[_reqId][msg.sender] = true;\n        requests[_reqId].approvals++;\n    }\n\n    function executeRequest(uint256 _reqId) public {\n        Request storage req = requests[_reqId];\n        require(req.approvals > members.length / 2, \"not enough approvals\");\n        require(!req.executed, \"already executed\");\n        require(address(this).balance >= req.amount, \"no money\");\n\n        req.executed = true;\n        req.recipient.transfer(req.amount);\n    }\n}",
+        "file": "contracts/Task4.sol"
+      }
+    }
+  }
+}
