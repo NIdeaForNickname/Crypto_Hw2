@@ -1,28 +1,26 @@
-REMIX DEFAULT WORKSPACE
+1. Реализуйте контракт ArrayUtils, который будет использовать библиотеку ArrayLibrary для поиска, сортировки и удаления элементов массива.
+Ключевые моменты:
+- Создание библиотеки с полезными функциями.
+- Использование using for для расширения возможностей массивов.
 
-Remix default workspace is present when:
-i. Remix loads for the very first time 
-ii. A new workspace is created with 'Default' template
-iii. There are no files existing in the File Explorer
+2. Бабуся, яка страждає на склероз, під Новий рік згадала, що має онуків, і поки вона знову про них не забула, хоче розподілити між ними деяку кількість ETH, щоб кожен з них міг на свій день народження у прийдешньому році забрати свій грошовий подарунок. Сума подарунка дорівнює внесеній бабусею сумі на депозит смарт-контракту, поділеній на кількість її онуків. Сума подарунка доступна для зняття кожному онуку не тільки в дату дня народження, але і після цієї дати.
 
-This workspace contains 3 directories:
+3. Смарт-контракт може бути використаний для створення фонду освітніх грантів, у якому учасники можуть інвестувати гроші, а потім підтримувати студентів або учнів на різних етапах їхнього навчання.
 
-1. 'contracts': Holds three contracts with increasing levels of complexity.
-2. 'scripts': Contains four typescript files to deploy a contract. It is explained below.
-3. 'tests': Contains one Solidity test file for 'Ballot' contract & one JS test file for 'Storage' contract.
+Як працює смарт-контракт:
 
-SCRIPTS
+* Студенти або їхні родини можуть вносити кошти до контракту для накопичення гранту на навчання.
+* Коли учень досягає певної освітньої мети (наприклад, вступає до університету чи завершує курс), контракт автоматично виплачує кошти.
+* Розмір гранту може залежати від успішності студента або від часу, коли він отримав кошти.
+* Якщо студент не виконав умови, смарт-контракт може заморозити кошти до виконання зобов’язань.
+* Додатково: додайте для кожної ситуації події. Створіть модифікатори для функцій, наприклад, підтверджувати завершення навчання студента може лише власник контракту.
 
-The 'scripts' folder has two typescript files which help to deploy the 'Storage' contract using 'ethers.js' libraries.
+4
+. Смарт-контракт допомагає створити фонд для екстрених ситуацій, наприклад, для медичних потреб. У такій програмі кілька людей або членів однієї сім’ї можуть вносити гроші до контракту, який активується лише за необхідності.
 
-For the deployment of any other contract, just update the contract name from 'Storage' to the desired contract and provide constructor arguments accordingly 
-in the file `deploy_with_ethers.ts`
+Як працює смарт-контракт:
 
-In the 'tests' folder there is a script containing Mocha-Chai unit tests for 'Storage' contract.
-
-To run a script, right click on file name in the file explorer and click 'Run'. Remember, Solidity file must already be compiled.
-Output from script will appear in remix terminal.
-
-Please note, require/import is supported in a limited manner for Remix supported modules.
-For now, modules supported by Remix are ethers, swarmgw, chai, multihashes, remix and hardhat only for hardhat.ethers object/plugin.
-For unsupported modules, an error like this will be thrown: '<module_name> module require is not supported by Remix IDE' will be shown.
+* Учасники щомісячно вносять гроші до смарт-контракту, створюючи накопичувальний фонд.
+* У разі екстреної ситуації (наприклад, хвороби, аварії), смарт-контракт автоматично виплачує кошти з фонду людині, яка їх потребує.
+* Для запобігання зловживанням контракт може вимагати підтвердження від кількох учасників чи сторонньої медичної організації.
+* Кошти можуть бути використані лише для заздалегідь узгоджених потреб, таких як лікування чи допомога у випадку надзвичайних ситуацій.
